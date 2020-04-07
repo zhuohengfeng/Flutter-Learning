@@ -64,7 +64,7 @@ $ flutter run -d ‘iPhone X’
 ## 二，入门基础知识
 
 
-### 如何导入Widget
+### 1. 如何导入Widget
 
 > 在Fluter中，万物皆Widget!!!
 
@@ -79,7 +79,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/my_custom_widgets.dart'; 
 ```
 
-### 如何写一个Hello World
+### 2. 如何写一个Hello World
 
 在flutter中，可以使用Center和Text这2个widget来实现一个最简单的hello world：
 
@@ -88,7 +88,7 @@ import 'package:flutter/my_custom_widgets.dart';
 <img width="360" alt="HelloWorld" src="images/chart_02/2_helloworld_show.png">
 
 
-### 如何生成更复杂的Widget树
+### 3. 如何生成更复杂的Widget树
 
 > 重要的事情再说一遍：在Fluter中，万物皆Widget!!!
 
@@ -100,14 +100,147 @@ Widget可以定义：
 - 文本元素 - 像字体或颜色主题
 - 类似布局的填充或对齐的一个方向
 
+```
+import 'package:flutter/material.dart';
+
+/// Flutter的主入口
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      title: 'Welcome to Flutter',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Welcome to Flutter'),
+        ),
+        body: Center(
+          child: Text('Hello World'),
+        ),
+      ),
+    );
+  }
+}
+```
+
+<img width="360" alt="HelloWorld" src="images/chart_02/3_helloworld_show.png">
 
 
+## 三，项目资源、依赖、本地化
+
+### 1. 如何存放图片资源以及如何处理不同分辨率
+
+和安卓不同，flutter不区分res和assets，所有都是作为assets处理。assets可以被放置到任何属性文件夹中。
+
+在flutter中，assets可以是任意类型的文件，而不仅仅是图片。例如，可以把json放在在my-assets文件夹中。并在<font color=red>pubspec.yaml</font>文件中声明assets:
+
+```
+assets:
+	- my-assets/data.json
+	- my-assets/logo.png
+```
+
+然后在代码中可以通过<font color=red>AssetBundle</font>来访问它：
+
+```
+import 'package:flutter/services.dart';
+
+Future<String> loadAsset() async {
+  return await rootBundle.loadString('my-assets/data.json');
+}
+```
+	
+对于图片而言，flutter遵循了一个简单的基于像素密度的格式。Image assets可能是1.0x, 2.0x, 3.0x或是其他的任何倍数。
+
+Android不同像素密度的图片和flutter的像素比率的对应关系：
+
+```
+ldpi    0.75x
+mdpi    1.0x
+hdpi    1.5x
+xhdpi   2.0x
+xxhdpi  3.0x
+xxxhdpi 4.0x
+```
+
+所以，举个栗子，可以把图片(1.0x)放置到images文件中，并把其他分辨率的图片放在对应的子文件夹中，并接上合适的比例系数，就像这样：
+
+```
+images/my_icon.png       // Base: 1.0x image 
+images/2.0x/my_icon.png  // 2.0x image
+images/3.0x/my_icon.png  // 3.0x image
+```
+
+然后在pubspec.yaml中声明这个图片资源(只要一句):
+
+```
+assets:
+	- images/my_icon.png
+```
+
+之后就可以通过AssetImage来访问，或者直接通过Image Widget加载：
+
+```
+return AssetImage('images/my_icon.png');
+
+@override
+Widget build(BuildContext context) {
+	return Image.asset("images/my_image.png");
+}
+```
+
+### 2. 如何添加Flutter项目所需要的依赖
+
+在android中，是通过gradle文件来添加依赖。flutter使用dart构建系统和Pub包管理器来处理依赖：
+
+```
+dependencies:
+	flutter:
+		sdk: flutter
+		
+	google_sign_in: ^3.0.3
+```
+
+用于查找Flutter插件的网站: [Pub Site](https://pub.dev/flutter/packages)
 
 
-## 三，项目结构、资源、依赖、本地化
+### 3. 如何处理本地化(多语言)
+
+略
 
 
 ## 四，认识视图(Views)
+
+### 1. 谁是flutter中的view
+
+### 2. 如何更新Widgets
+
+### 3. 如何布局
+
+### 4. 如何在布局中添加或者删除组件
+
+### 5. 如何对widget做动画
+
+### 6. 如何绘制
+
+### 7. 如何构建自定义widget
+
+### 8. 如何设置widget的透明度
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 五，布局与列表
@@ -141,3 +274,4 @@ Widget可以定义：
 
 
 
+g
