@@ -303,7 +303,7 @@ Opacity (
 
 ## 五，布局与列表
 
-### 1. LinearLayout在flutter中等价于什么
+### 1.  如何设置布局
 
 在flutter中，使用Row或者Colum widget来实现控件水平或垂直排列
 
@@ -319,54 +319,192 @@ Row/Column (
 
 ```
 
-### 2. RelativeLayout在flutter中等价于什么
 
-在flutter中，有几种方法可以实现widget相对于彼此位置相对排列
+在flutter中，有几种方法可以实现widget相对于彼此位置相对排列。可以通过Column，Row和Stack的组合实现RelativeLayout的效果。
 
+Container 控制一个布局的样式和属性
 
+Center 负责居中它的子widget
 
+Stack 可以控制子widget在一层，子widget可以完全或者部分覆盖基础widget。Stack控件将其子项相对于其框的边缘定位。
 
+### 2. 列表组件的使用
 
+在Flutter中，可以使用ListView达到列表效果，但是在flutter中没有adapter，我们唯一要做的就是控制这个list中要展示的数据。
 
+- 如何知道点击了列表中哪个item?
+	- 通过GestureDetector来监听item的点击事件
 
-### 3. 如何使用widget定义布局属性
+### 3. 如何动态更新ListView
 
-### 4. 如何分层布局
-
-### 5. 如何设置布局样式
-
-### 6. 列表组件的使用
-
-### 7. 如何动态更新ListView
-
+- 一个更新ListView的简单方法是，在setState()中创建一个新的List，并把旧List的数据拷贝给新的List。虽然这样很简单，但当数据集很大时，并不推荐这样做：
+- 一个推荐的，高效的且有效的做法是，使用ListView.Builder来构建列表。它接收2个主要参数：列表的初始长度，和一个ItemBuilder方法。
 
 
 ## 六，状态管理
 
+### 什么是StatelessWidget
+
+StatelessWidget是一个不需要状态更改的widget，它没有要管理的内部状态。
+当描述的用户界面部分不依赖于对象本身中的配置信息以及widget的BuildContext时，无状态widget非常有用。
+
+比如AboutDialog, CircleAvator和Text都是StatelessWidget的子类。
+
+### 什么是StatefulWidget
+
+StatefulWidget是可变状态的widget。可以调用setState告诉flutter框架，某个状态发生了变化，flutter会重新运行build方法，以便应用程序可以应用最新状态。
+
+状态是在构建widget时可以同步读取的信息可能会在widget的生命周期中发生变化。确保在状态改变时及时通知状态变化是widget实现者的责任。当widget可以动态更改时，需要使用StatefulWidget。
+
+例如，通过键入表单或移动滑块来更改widget的状态，或者它可以随时间变化，或者数据推送更新UI。
+
+Checkbox，Radio，Slider，InkWell，Form 和 TextField 都是有状态的widget，也是StatefulWidget的子类。
+
 
 ## 七，路由与导航
+
+### 1. 如何实现路由跳转
+
+要在Flutter中切换屏幕，我们可以访问路由以绘制新的widget。管理多个页面有2个核心概念和类：Route和Navigator。
+
+Route是应用程序的屏幕或页面的抽象(可以认为是Activity)，Navigator是管理Route的Widget。Navigator可以通过push和pop route以实现页面切换。
+
+- 具体制定一个由路由名构成的Map。（MaterialApp）
+- 直接跳转到一个路由。(WidgetApp)
+
+下面构建一个Map的例子：
+
+```
+void main() {
+	runApp(MaterialApp(
+			home: MyAppHome(),
+			routes: <String, WidgetBuilder> {
+				'/a' : (BuildContext context) => MyPage(title: 'page A'),
+				'/b' : (BuildContext context) => MyPage(title: 'page B'),
+				'/c' : (BuildContext context) => MyPage(title: 'page C'),
+			}
+		)
+	);
+}
+```
+
+通过把路由的名字push给一个Navigator来跳转：
+
+```
+Navigator.of(context).pushNamed('/b');
+```
+
+还可以使用Navigator的push方法，该方法将给定route添加到导航器的历史记录中：
+
+```
+Navigator.push(
+	context,
+	MaterialPageRoute(
+		builder: (BuildContext context) => UsualNavscreen()
+	)
+);
+```
+
+### 2. 如何获取路由跳转返回的结果
+
+在Android中有startActivityForResult来获取跳转页面后返回的结果，那么在flutter中Navigator类不仅用来处理flutter中的路由，还被用来获取路由返回的结果。
+
+通过await等待路由返回的结果来达到这点：
+
+比如，打开一个页面让用户选择一个地点：
+
+```
+Map coordinates = await Navigator.of(context).pushNamed('/location');
+```
+
+然后在选择地址页面，退出(pop)时携带结果：
+
+```
+Navigator.of(context).pop({'lat': 43,822, 'long': -78.2323});
+```
 
 
 ## 八，线程和异步UI
 
+可以使用Dart语言的async/await来实现异步操作，
+
+
+要使用http包，在pubspec.yaml中添加如下依赖：
+
+```
+dependencies:
+	...
+# 	http: ^0.12.0+
+```
+
+如何进行网络请求
+
+```
+loadData() async {
+	String dataURL = "https://rokid.com/v1/getList";
+	http.Response response = await http.get(dataURL);
+	setState(() {
+		widget = json.decode(response.body);
+	});
+}
+```
+
 
 ## 九，手势检测及触摸事件处理
 
+在flutter中，有2种方法来添加点击监听：
 
-## 十，主题和文字处理
+- 1. 如果widget本身支持事件监听，直接传递给它一个函数，并在这个函数里实现响应方法：
+
+```
+@override
+Widget build(BuildContext context) {
+	return RaisedButton(
+		onPressed: () {
+			print('click');
+		},
+	);
+}
+```
 
 
-## 十一，表单输入与富文本
+- 2. 如果widget本身不支持事件监听，则在外面包裹一个GestureDetector，并给它的onTap属性传递一个函数：
+
+```
+class SampleApp extends StatelessWidget {
+	@override
+	Widget build() {
+		return Scaffold(
+			body: Center(
+				child: GestureDetector(
+					child: FlutterLogo(
+						size: 200.0,
+					),
+					onTap: () {
+						print("tap");
+					}
+				),
+			),
+		);
+	}
+}
+```
+
+使用GestureDetector，可以监听多种手势，例如：
+
+* 点击
+	* onTapDown
+	* onTapUp
+	* onTap
+	* onTapCancel
+
+* 双击
+	* onDoubleTap
+
+* 长按
+	* onLongPress
 
 
-## 十二，调用硬件、第三方SDK以及平台交互、通知
 
 
 
-
-
-
-
-
-
-g
