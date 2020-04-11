@@ -216,34 +216,129 @@ dependencies:
 
 ### 1. 谁是flutter中的view
 
+在Android中，View是屏幕上显示的所有内容的基础，按钮、工具栏、输入框等一切都是view;
+
+在flutter中我们可以将widget当做是android中的view，但他们并完全等价。首先widget是具有不同的生命周期：它们是不可变的，它们会存在于状态被改变之前。每当widget或其状态发生变化时，futter框架都会创建一个新的widget实例树。相比之下，android视图被绘制一次，并且调用invalidate之前不会重绘。
+
+此外，与view不同，flutter的widget很轻巧，部分原因在于它的不变性。因为它本身不是视图，并且不是直接绘制任何东西，而是对UI及其语义的描述。
+
+
 ### 2. 如何更新Widgets
+
+在Android中要更新视图，我们可以直接通过对应的方法来操作更改；在flutter中，widget是不可变的，不会直接更新。相反，我们可以通过操纵widget的状态来更新它们。
+
+这就是有状态和无状态widget的概念呢。 StatelessWidget就是一个没有状态的widget，适用于当我们描述的用户界面不依赖于对象中的配置信息是。
+
+如果要根据HTTP网络请求或者用户交互后收到的数据动态更改UI，则必须使用StatefulWidget并告诉flutter框架widget的状态已经更新，以便更新该widget。
+
+无状态widget和有状态widget之间的重要区别在于StatefulWidgets具有一个state对象，该对象存储状态数据并将其传递到树重建中，因此状态不会丢失。
+
 
 ### 3. 如何布局
 
-### 4. 如何在布局中添加或者删除组件
+在android中，我们通过XML编写布局；在flutter中，我们通过编写一个widget树来声明布局：
 
-### 5. 如何对widget做动画
+下面这个例子展示了如何展示一个带有padding的简单widget:
 
-### 6. 如何绘制
+```
+class MyApp extends StatelessWidget {
 
-### 7. 如何构建自定义widget
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sample App'),
+      ),
+      body: Center(
+        child: MaterialButton(
+          onPressed: () {},
+          child: Text('Hello'),
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+        ),
+      ),
+    );
+  }
+}
+```
 
-### 8. 如何设置widget的透明度
+### 4. 如何对widget做动画
+
+在flutter中，使用动画库来包裹widgets，而不是创建一个动画widget。它使用AnimationController，是一个可以暂停，寻找，停止，反转动画的Animation类型。我们可以创建一个或多个的Animation并附加给一个controller。
 
 
+### 5. 如何构建自定义widget
+
+在flutter中，推荐组合多个小的widgets来构建一个自定义的widget，而不是扩展它。
+
+举个栗子，如果要构建一个CustomButton，并在构造器中传入它的label，那就组合RaiseButton和label，而不是扩展RaisedButton。
 
 
+```
+class CustomButton extends StatelessWidget {
 
+	final String label;
+	CustomButton(this.label);
+	
+	@override
+	Widget build(BuildContext context) {
+		return new RaisedButton(
+			onPressed: () {},
+			child: new Text(label)
+		);
+	}
 
+}
+```
 
+### 6. 如何设置widget的透明度
 
+在flutter中，如果要改变透明度，我们可以给widget包裹一个Opacity(不透明性) widget来做到这一点：
 
-
-
-
-
+```
+Opacity (
+	opacity: 0.5,
+	child: Text('透明度50%')
+)
+```
 
 ## 五，布局与列表
+
+### 1. LinearLayout在flutter中等价于什么
+
+在flutter中，使用Row或者Colum widget来实现控件水平或垂直排列
+
+```
+Row/Column (
+	mainAxisAlignment: MainAxisAlignment.center,
+	children: <Widget>[
+		Text('Row one'),
+		Text('Row two'),
+		Text('Row three'),
+	],
+) 
+
+```
+
+### 2. RelativeLayout在flutter中等价于什么
+
+在flutter中，有几种方法可以实现widget相对于彼此位置相对排列
+
+
+
+
+
+
+
+### 3. 如何使用widget定义布局属性
+
+### 4. 如何分层布局
+
+### 5. 如何设置布局样式
+
+### 6. 列表组件的使用
+
+### 7. 如何动态更新ListView
+
 
 
 ## 六，状态管理
